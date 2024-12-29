@@ -1,5 +1,6 @@
 {
   "name": "AI Agent Toolbox",
+  "favicon": "/favicon.png",
   "colors": {
     "primary": "#0D9373",
     "light": "#07C983",
