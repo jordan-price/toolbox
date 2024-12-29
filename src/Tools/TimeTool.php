@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Tools;
+namespace JordanPrice\Toolbox\Tools;
 
 use Carbon\Carbon;
+use InvalidArgumentException;
 use EchoLabs\Prism\Tool;
 use Illuminate\Support\Facades\Log;
 
@@ -15,7 +16,6 @@ class TimeTool extends Tool
         'America/Los_Angeles',
         'America/Anchorage',
         'America/Adak',
-        'America/Phoenix',
         'Pacific/Honolulu',
         'America/Detroit',
         'America/Indiana/Indianapolis'
@@ -25,9 +25,9 @@ class TimeTool extends Tool
     {
         $this
             ->as('time')
-            ->for('Get current time, convert between timezones, or format time')
-            ->withStringParameter('timezone', 'Target timezone (e.g., America/Chicago, UTC). Default is local timezone.')
-            ->withStringParameter('format', 'Output format (e.g., "Y-m-d h:i A", "human"). Default is full.')
+            ->for('Get current time in specified timezone and format')
+            ->withParameter('timezone', 'Target timezone (e.g., America/Chicago, UTC). Default is local timezone.')
+            ->withParameter('format', 'Output format (e.g., "Y-m-d h:i A", "human"). Default is full.')
             ->using($this);
     }
 
@@ -46,18 +46,18 @@ class TimeTool extends Tool
             try {
                 $time = $time->setTimezone($timezone);
             } catch (\Exception $e) {
-                throw new \InvalidArgumentException("Invalid timezone: {$timezone}");
+                throw new InvalidArgumentException("Invalid timezone: {$timezone}");
             }
 
             // Check if it's a US timezone
             $isUsTimezone = in_array($timezone, $this->usTimezones);
 
             // Format the time
-            $result = match($format) {
+            $result = match ($format) {
                 'human' => $time->diffForHumans(),
                 'date' => $time->format('F j, Y'),
                 'time' => $isUsTimezone ? $time->format('g:i A') : $time->format('H:i'),
-                'full' => $isUsTimezone 
+                'full' => $isUsTimezone
                     ? $time->format('g:i A') . ' on ' . $time->format('F j, Y')
                     : $time->format('H:i') . ' on ' . $time->format('F j, Y'),
                 'day' => $time->format('l, F j, Y'),
@@ -69,9 +69,8 @@ class TimeTool extends Tool
             $response = "Current time in " . $time->tzName . ": " . $result;
 
             Log::info('Time Tool Output:', ['response' => $response]);
-            
-            return $response;
 
+            return $response;
         } catch (\Exception $e) {
             Log::error('Time Tool Error:', ['error' => $e->getMessage()]);
             throw $e;

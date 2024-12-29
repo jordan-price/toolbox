@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Tools;
+namespace JordanPrice\Toolbox\Tools;
 
-use App\Mail\GeneralEmail;
+use JordanPrice\Toolbox\Mail\GeneralEmail;
 use EchoLabs\Prism\Tool;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -15,9 +15,9 @@ class EmailTool extends Tool
         $this
             ->as('email')
             ->for('Send emails to specified recipients')
-            ->withStringParameter('to', 'Email address of the recipient')
-            ->withStringParameter('subject', 'Subject of the email')
-            ->withStringParameter('message', 'Content of the email')
+            ->withParameter('to', 'Email address of the recipient')
+            ->withParameter('subject', 'Subject of the email')
+            ->withParameter('message', 'Content of the email')
             ->using($this);
     }
 
@@ -43,9 +43,8 @@ class EmailTool extends Tool
 
             $response = "Email sent successfully to {$to}";
             Log::info('Email Tool Output:', ['response' => $response]);
-            
-            return $response;
 
+            return $response;
         } catch (\Exception $e) {
             Log::error('Email Tool Error:', [
                 'to' => $to,

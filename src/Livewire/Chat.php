@@ -292,7 +292,7 @@ Never skip any required tool calls. Always get fresh data from each tool.')
                 'last_tool' => $lastToolCall,
                 'compound_task_completed' => $emailSent,
                 'tool_results' => $toolResults,
-                'processing_time' => microtime(true) - LARAVEL_START,
+                'processing_time' => defined('\LARAVEL_START') ? (microtime(true) - \LARAVEL_START) : 0,
                 'email_sent' => $emailSent,
                 'last_tool_result' => end($toolResults),
                 'total_tokens' => property_exists($response, 'usage') ?

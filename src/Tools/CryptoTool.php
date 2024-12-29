@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tools;
+namespace JordanPrice\Toolbox\Tools;
 
 use EchoLabs\Prism\Tool;
 use Illuminate\Support\Facades\Http;
@@ -16,9 +16,9 @@ class CryptoTool extends Tool
     {
         $this
             ->as('crypto')
-            ->for('Get current cryptocurrency prices and market data')
-            ->withStringParameter('coin', 'The cryptocurrency to get price for (e.g., bitcoin, ethereum)')
-            ->withStringParameter('currency', 'The currency to show price in (e.g., usd, eur)')
+            ->for('Get cryptocurrency price information')
+            ->withParameter('coin', 'The cryptocurrency to get price for (e.g., bitcoin, ethereum)')
+            ->withParameter('currency', 'The currency to show price in (e.g., usd, eur)')
             ->using($this);
     }
 
@@ -27,8 +27,8 @@ class CryptoTool extends Tool
         $currency = strtolower($currency);
         if (!in_array($currency, $this->supportedCurrencies)) {
             throw new \InvalidArgumentException(
-                "Currency '{$currency}' not supported. Supported currencies: " . 
-                implode(', ', $this->supportedCurrencies)
+                "Currency '{$currency}' not supported. Supported currencies: " .
+                    implode(', ', $this->supportedCurrencies)
             );
         }
         return $currency;
@@ -52,7 +52,7 @@ class CryptoTool extends Tool
         ];
 
         $symbol = $symbols[$currency] ?? '';
-        
+
         // Format with appropriate decimal places
         if ($price < 1) {
             $formatted = number_format($price, 4);
@@ -88,7 +88,7 @@ class CryptoTool extends Tool
             }
 
             $data = $response->json();
-            
+
             if (empty($data[$coin])) {
                 throw new \Exception("Cryptocurrency '{$coin}' not found.");
             }
@@ -107,9 +107,8 @@ class CryptoTool extends Tool
             $response .= "Last updated: {$lastUpdatedStr}";
 
             Log::info('Crypto Tool Output:', ['response' => $response]);
-            
-            return $response;
 
+            return $response;
         } catch (\Exception $e) {
             Log::error('Crypto Tool Error:', ['error' => $e->getMessage()]);
             throw $e;

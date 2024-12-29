@@ -17,8 +17,8 @@ class ToolboxServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        // Load views
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'toolbox');
+        // Load views with explicit namespace
+        $this->loadViewsFrom(__DIR__.'/../resources/views/toolbox', 'toolbox');
 
         // Register Livewire components
         Livewire::component('toolbox-chat', Chat::class);
@@ -30,7 +30,7 @@ class ToolboxServiceProvider extends ServiceProvider
 
         // Publish views
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/toolbox'),
+            __DIR__.'/../resources/views/toolbox' => resource_path('views/vendor/toolbox'),
         ], 'toolbox-views');
     }
 }

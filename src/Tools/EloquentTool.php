@@ -1,16 +1,13 @@
 <?php
 
-namespace App\Tools;
+namespace JordanPrice\Toolbox\Tools;
 
-use EchoLabs\Prism\Tool;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use EchoLabs\Prism\Schema\ArraySchema;
-use EchoLabs\Prism\Schema\StringSchema;
-use EchoLabs\Prism\Schema\ObjectSchema;
+use EchoLabs\Prism\Tool;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class EloquentTool extends Tool
@@ -23,22 +20,9 @@ class EloquentTool extends Tool
         $this
             ->as('eloquent')
             ->for('Execute Eloquent queries on Laravel models')
-            ->withStringParameter('model', 'The model name to query (e.g., User, Post)')
-            ->withStringParameter('operation', 'The operation to perform (e.g., select, where, orderBy)')
-            ->withArrayParameter(
-                'parameters',
-                'Parameters for the operation',
-                new ObjectSchema(
-                    name: 'parameter',
-                    description: 'A parameter for the Eloquent operation',
-                    properties: [
-                        new StringSchema('column', 'The column name to operate on'),
-                        new StringSchema('value', 'The value to use in the operation', nullable: true),
-                        new StringSchema('operator', 'The operator to use (e.g., =, >, <)', nullable: true)
-                    ],
-                    requiredFields: ['column']
-                )
-            )
+            ->withParameter('model', 'The model name to query (e.g., User, Post)')
+            ->withParameter('operation', 'The operation to perform (e.g., select, where, orderBy)')
+            ->withParameter('parameters', 'Parameters for the operation')
             ->using($this);
 
         // Automatically discover available models
@@ -49,7 +33,7 @@ class EloquentTool extends Tool
     {
         $modelsPath = app_path('Models');
         Log::info('Discovering models in path:', ['path' => $modelsPath]);
-        
+
         if (!file_exists($modelsPath)) {
             Log::warning('Models directory does not exist:', ['path' => $modelsPath]);
             return;
@@ -58,13 +42,13 @@ class EloquentTool extends Tool
         foreach (glob("{$modelsPath}/*.php") as $file) {
             $className = 'App\\Models\\' . pathinfo($file, PATHINFO_FILENAME);
             Log::info('Found potential model:', ['class' => $className]);
-            
+
             if (class_exists($className) && (is_subclass_of($className, Model::class) || is_subclass_of($className, Authenticatable::class))) {
                 $this->allowedModels[] = $className;
                 Log::info('Added model to allowed list:', ['class' => $className]);
             }
         }
-        
+
         Log::info('Discovered models:', ['models' => $this->allowedModels]);
     }
 
@@ -79,7 +63,7 @@ class EloquentTool extends Tool
     {
         $modelClass = "App\\Models\\{$model}";
         Log::info('Validating model:', ['model' => $model, 'class' => $modelClass, 'allowed' => $this->allowedModels]);
-        
+
         if (!in_array($modelClass, $this->allowedModels)) {
             Log::error('Model not found or not allowed:', ['model' => $model, 'class' => $modelClass]);
             throw new \InvalidArgumentException("Model '{$model}' not found or not allowed. Available models: " . implode(', ', array_map(fn($class) => class_basename($class), $this->allowedModels)));
@@ -149,7 +133,6 @@ class EloquentTool extends Tool
             Log::info('Eloquent Tool Output:', ['response' => $response]);
 
             return $response;
-
         } catch (\Exception $e) {
             Log::error('Eloquent Tool Error:', ['error' => $e->getMessage()]);
             throw $e;

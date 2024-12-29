@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tools;
+namespace JordanPrice\Toolbox\Tools;
 
 use EchoLabs\Prism\Tool;
 use Illuminate\Support\Facades\Http;
@@ -14,16 +14,16 @@ class WeatherTool extends Tool
 
     public function __construct()
     {
-        $this->apiKey = config('services.weatherapi.key');
+        $this->apiKey = config('services.openweathermap.key');
 
         if (empty($this->apiKey)) {
-            throw new InvalidArgumentException('WeatherAPI key is not configured');
+            throw new InvalidArgumentException('OpenWeatherMap API key is not configured');
         }
 
         $this
             ->as('weather')
-            ->for('Gets info about the current weather at a given location')
-            ->withStringParameter('location', 'Location to get the weather for. Can be a city name, zipcode, IP address, or lat/lng coordinates. Example: "London"')
+            ->for('Get current weather information for a location')
+            ->withParameter('location', 'Location to get the weather for. Can be a city name, zipcode, IP address, or lat/lng coordinates. Example: "London"')
             ->using($this);
     }
 
@@ -50,11 +50,11 @@ class WeatherTool extends Tool
             // Format a human-readable response
             $result = sprintf(
                 "Current weather in %s, %s:\n" .
-                "Temperature: %.1f°C (%.1f°F)\n" .
-                "Condition: %s\n" .
-                "Humidity: %d%%\n" .
-                "Wind: %.1f km/h %s\n" .
-                "Last updated: %s",
+                    "Temperature: %.1f°C (%.1f°F)\n" .
+                    "Condition: %s\n" .
+                    "Humidity: %d%%\n" .
+                    "Wind: %.1f km/h %s\n" .
+                    "Last updated: %s",
                 $location['name'],
                 $location['country'],
                 $current['temp_c'],
@@ -67,9 +67,8 @@ class WeatherTool extends Tool
             );
 
             Log::info('Weather Tool Output:', ['response' => $result]);
-            
-            return $result;
 
+            return $result;
         } catch (\Exception $e) {
             Log::error('Weather Tool Error:', [
                 'location' => $location,
