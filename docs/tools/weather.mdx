@@ -8,10 +8,22 @@ description: 'A comprehensive weather tool for fetching real-time weather data a
 **env vars**: `WEATHER_API_KEY`     
 **source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Weather/WeatherTool.php)   
 
-## Install
+## Publish
+
+Optionally, you can publish the configuration file to make modifications:
 
 ```bash
-composer require jordan-price/toolbox
+# Publish just this tool
+php artisan toolbox:publish weather
+
+# Or publish all tools
+php artisan toolbox:publish
+```
+
+Add your Weather API key to your `.env` file:
+
+```env
+WEATHER_API_KEY=your_api_key_here
 ```
 
 ## Prism Integration

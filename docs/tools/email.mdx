@@ -8,10 +8,16 @@ description: 'A tool for sending emails using Laravel Mail.'
 **env vars**: `None`    
 **source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Email/EmailTool.php)   
 
-## Install
+## Publish
+
+Optionally, you can publish the configuration file to make modifications:
 
 ```bash
-composer require jordan-price/toolbox
+# Publish just this tool
+php artisan toolbox:publish email
+
+# Or publish all tools
+php artisan toolbox:publish
 ```
 
 ## Configuration

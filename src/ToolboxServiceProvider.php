@@ -5,6 +5,7 @@ namespace JordanPrice\Toolbox;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use JordanPrice\Toolbox\Livewire\Chat;
+use JordanPrice\Toolbox\Console\Commands\PublishCommand;
 
 class ToolboxServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,13 @@ class ToolboxServiceProvider extends ServiceProvider
 
         // Register Livewire components
         Livewire::component('toolbox-chat', Chat::class);
+
+        // Register commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                PublishCommand::class,
+            ]);
+        }
 
         // Publish configuration
         $this->publishes([
