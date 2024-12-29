@@ -10,6 +10,10 @@
     {
       "name": "GitHub",
       "url": "https://github.com/jordan-price/toolbox"
+    },
+    {
+      "name": "Twitter",
+      "url": "https://x.com/jcprice7"
     }
   ],
   "topbarCtaButton": {
@@ -33,6 +37,7 @@
     }
   ],
   "footerSocials": {
-    "github": "https://github.com/jordan-price/toolbox"
+    "github": "https://github.com/jordan-price/toolbox",
+    "twitter": "https://x.com/jcprice7"
   }
 }
