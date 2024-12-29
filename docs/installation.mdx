@@ -1,27 +1,61 @@
 ---
 title: 'Installation'
-description: 'Learn how to install and set up the Toolbox package'
+description: 'How to install and configure the toolbox package'
 ---
 
 # Installation
 
-You can install the Toolbox package via Composer:
+## Requirements
+
+- PHP 8.1 or higher
+- Laravel 10.0 or higher
+- Echolabs Prism 1.0 or higher
+
+## Installation Steps
+
+1. Install the package via Composer:
 
 ```bash
 composer require jordan-price/toolbox
 ```
 
-## Requirements
+2. Install Echolabs Prism:
 
-- PHP 8.0 or higher
-- Laravel 8.0 or higher (for Laravel integration)
+```bash
+composer require echolabs/prism
+```
+
+3. Publish the configuration file:
+
+```bash
+php artisan vendor:publish --tag="toolbox-config"
+```
 
 ## Configuration
 
-After installation, publish the configuration file:
+After installation, you can configure the package in your `.env` file:
 
-```bash
-php artisan vendor:publish --provider="JordanPrice\Toolbox\ToolboxServiceProvider"
+```env
+# Weather Tool (optional)
+WEATHER_API_KEY=your_api_key
 ```
 
-This will create a `config/toolbox.php` file in your application.
+## Usage with Prism
+
+All tools in this package are designed to work with Echolabs Prism. Here's a basic example:
+
+```php
+use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
+use JordanPrice\Toolbox\Tools\Weather\WeatherTool;
+
+$prism = Prism::text()
+    ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
+    ->withTools([WeatherTool::class])
+    ->toolChoice(ToolChoice::Any);
+
+$response = $prism->generate();
+```
+
+For more detailed examples, see the individual tool documentation.

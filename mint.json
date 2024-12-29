@@ -1,10 +1,5 @@
 {
-  "name": "Toolbox",
-  "logo": {
-    "light": "/logo/light.png",
-    "dark": "/logo/dark.png"
-  },
-  "favicon": "/favicon.png",
+  "name": "AI Agent Toolbox",
   "colors": {
     "primary": "#0D9373",
     "light": "#07C983",
