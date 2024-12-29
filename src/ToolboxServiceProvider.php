@@ -1,10 +1,10 @@
 <?php
 
-namespace Bestie\Toolbox;
+namespace JordanPrice\Toolbox;
 
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
-use Bestie\Toolbox\Livewire\Chat;
+use JordanPrice\Toolbox\Livewire\Chat;
 
 class ToolboxServiceProvider extends ServiceProvider
 {

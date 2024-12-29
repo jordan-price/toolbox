@@ -1,5 +1,5 @@
 {
-    "name": "bestie/toolbox",
+    "name": "jordan-price/toolbox",
     "description": "A Laravel package providing various tools including calculator, weather, email, time, and cryptocurrency tools",
     "type": "library",
     "license": "MIT",
@@ -17,13 +17,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Bestie\\Toolbox\\": "src/"
+            "JordanPrice\\Toolbox\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Bestie\\Toolbox\\ToolboxServiceProvider"
+                "JordanPrice\\Toolbox\\ToolboxServiceProvider"
             ]
         }
     },

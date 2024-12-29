@@ -1,16 +1,16 @@
 <?php
 
-namespace Bestie\Toolbox\Livewire;
+namespace JordanPrice\Toolbox\Livewire;
 
 use Livewire\Component;
 use EchoLabs\Prism\Prism;
 use EchoLabs\Prism\Enums\Provider;
-use Bestie\Toolbox\Tools\CalculatorTool;
-use Bestie\Toolbox\Tools\WeatherTool;
-use Bestie\Toolbox\Tools\EmailTool;
-use Bestie\Toolbox\Tools\TimeTool;
-use Bestie\Toolbox\Tools\EloquentTool;
-use Bestie\Toolbox\Tools\CryptoTool;
+use JordanPrice\Toolbox\Tools\CalculatorTool;
+use JordanPrice\Toolbox\Tools\WeatherTool;
+use JordanPrice\Toolbox\Tools\EmailTool;
+use JordanPrice\Toolbox\Tools\TimeTool;
+use JordanPrice\Toolbox\Tools\EloquentTool;
+use JordanPrice\Toolbox\Tools\CryptoTool;
 use Illuminate\Support\Facades\Log;
 
 class Chat extends Component

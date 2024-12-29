@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tools;
+namespace JordanPrice\Toolbox\Tools;
 
 use EchoLabs\Prism\Tool;
 use InvalidArgumentException;
