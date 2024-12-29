@@ -18,21 +18,21 @@
   ],
   "topbarCtaButton": {
     "name": "Get Started",
-    "url": "getting-started"
+    "url": "docs/getting-started"
   },
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["introduction", "installation", "configuration"]
+      "pages": ["docs/introduction", "docs/installation", "docs/configuration"]
     },
     {
       "group": "Tools",
       "pages": [
-        "tools/weather",
-        "tools/crypto",
-        "tools/email",
-        "tools/eloquent",
-        "tools/time"
+        "docs/tools/weather",
+        "docs/tools/crypto",
+        "docs/tools/email",
+        "docs/tools/eloquent",
+        "docs/tools/time"
       ]
     }
   ],
