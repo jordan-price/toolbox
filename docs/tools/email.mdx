@@ -18,6 +18,22 @@ A tool for sending emails.
 composer require jordan-price/toolbox
 ```
 
+## Configuration
+
+You can customize the email settings in your `config/toolbox.php` file:
+
+```php
+return [
+    'email' => [
+        // Custom Mailable class (optional)
+        'mailable' => \App\Mail\CustomEmail::class,
+        
+        // Custom email view (optional)
+        'view' => 'emails.custom'
+    ]
+];
+```
+
 ## Prism Integration
 
 ```php
