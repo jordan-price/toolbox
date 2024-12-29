@@ -1,0 +1,32 @@
+{
+    "name": "bestie/toolbox",
+    "description": "A Laravel package providing various tools including calculator, weather, email, time, and cryptocurrency tools",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jordan Price",
+            "email": "jordan@bestie.ai"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "laravel/framework": "^10.0|^11.0",
+        "echolabs/prism": "^1.0",
+        "livewire/livewire": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bestie\\Toolbox\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bestie\\Toolbox\\ToolboxServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
