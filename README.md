@@ -130,7 +130,7 @@ If you discover any security related issues, please email security@bestie.ai ins
 
 ## Credits
 
-- [Jordan Price](https://github.com/jordanprice)
+- [Jordan Price](https://github.com/jordan-price)
 - [All Contributors](../../contributors)
 
 ## License
