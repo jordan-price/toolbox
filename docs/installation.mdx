@@ -1,0 +1,27 @@
+---
+title: 'Installation'
+description: 'Learn how to install and set up the Toolbox package'
+---
+
+# Installation
+
+You can install the Toolbox package via Composer:
+
+```bash
+composer require jordan-price/toolbox
+```
+
+## Requirements
+
+- PHP 8.0 or higher
+- Laravel 8.0 or higher (for Laravel integration)
+
+## Configuration
+
+After installation, publish the configuration file:
+
+```bash
+php artisan vendor:publish --provider="JordanPrice\Toolbox\ToolboxServiceProvider"
+```
+
+This will create a `config/toolbox.php` file in your application.

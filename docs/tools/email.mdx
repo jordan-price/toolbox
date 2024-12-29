@@ -1,0 +1,22 @@
+---
+title: 'Email Tool'
+description: 'Documentation for the Email Tool component'
+---
+
+# Email Tool
+
+The Email Tool provides simplified email sending and management capabilities.
+
+## Usage
+
+```php
+use JordanPrice\Toolbox\Tools\Email\EmailTool;
+
+$email = new EmailTool();
+$email->send($to, $subject, $content);
+```
+
+## Available Methods
+
+- `send(string $to, string $subject, string $content)`: Send an email
+- `sendTemplate(string $to, string $template, array $data)`: Send an email using a template

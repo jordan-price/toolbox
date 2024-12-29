@@ -1,0 +1,22 @@
+---
+title: 'Weather Tool'
+description: 'Documentation for the Weather Tool component'
+---
+
+# Weather Tool
+
+The Weather Tool provides functionality to fetch and process weather data.
+
+## Usage
+
+```php
+use JordanPrice\Toolbox\Tools\Weather\WeatherTool;
+
+$weather = new WeatherTool();
+$forecast = $weather->getForecast($location);
+```
+
+## Available Methods
+
+- `getForecast(string $location)`: Get weather forecast for a specific location
+- `getCurrentConditions(string $location)`: Get current weather conditions

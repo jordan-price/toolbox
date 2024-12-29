@@ -1,0 +1,42 @@
+{
+  "name": "Toolbox",
+  "logo": {
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
+  },
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#0D9373",
+    "light": "#07C983",
+    "dark": "#0D9373"
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/jordan-price/toolbox"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "getting-started"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": ["introduction", "installation", "configuration"]
+    },
+    {
+      "group": "Tools",
+      "pages": [
+        "tools/weather",
+        "tools/crypto",
+        "tools/email",
+        "tools/eloquent",
+        "tools/time"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/jordan-price/toolbox"
+  }
+}

@@ -1,0 +1,22 @@
+---
+title: 'Time Tool'
+description: 'Documentation for the Time Tool component'
+---
+
+# Time Tool
+
+The Time Tool provides time manipulation and formatting utilities.
+
+## Usage
+
+```php
+use JordanPrice\Toolbox\Tools\Time\TimeTool;
+
+$time = new TimeTool();
+$formatted = $time->format($timestamp, 'Y-m-d');
+```
+
+## Available Methods
+
+- `format(string $timestamp, string $format)`: Format a timestamp
+- `convert(string $time, string $fromTz, string $toTz)`: Convert time between timezones

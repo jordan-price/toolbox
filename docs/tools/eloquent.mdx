@@ -1,0 +1,22 @@
+---
+title: 'Eloquent Tool'
+description: 'Documentation for the Eloquent Tool component'
+---
+
+# Eloquent Tool
+
+The Eloquent Tool provides enhanced Eloquent ORM utilities.
+
+## Usage
+
+```php
+use JordanPrice\Toolbox\Tools\Eloquent\EloquentTool;
+
+$eloquent = new EloquentTool();
+$results = $eloquent->search($model, $criteria);
+```
+
+## Available Methods
+
+- `search(string $model, array $criteria)`: Search records using specified criteria
+- `paginate(string $model, int $perPage)`: Get paginated results

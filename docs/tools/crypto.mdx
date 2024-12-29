@@ -1,0 +1,22 @@
+---
+title: 'Crypto Tool'
+description: 'Documentation for the Crypto Tool component'
+---
+
+# Crypto Tool
+
+The Crypto Tool provides cryptocurrency-related functionality.
+
+## Usage
+
+```php
+use JordanPrice\Toolbox\Tools\Crypto\CryptoTool;
+
+$crypto = new CryptoTool();
+$price = $crypto->getPrice('BTC');
+```
+
+## Available Methods
+
+- `getPrice(string $symbol)`: Get current price for a cryptocurrency
+- `getMarketData(string $symbol)`: Get market data for a cryptocurrency
