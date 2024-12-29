@@ -1,4 +1,4 @@
-# Bestie Toolbox
+# Ai Agent Toolbox
 
 A Laravel package providing various tools including calculator, weather, email, time, and cryptocurrency tools.
 
