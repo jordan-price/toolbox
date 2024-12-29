@@ -1,22 +1,53 @@
 ---
 title: 'Email Tool'
-description: 'Documentation for the Email Tool component'
+description: 'Email sending utility'
 ---
 
 # Email Tool
 
-The Email Tool provides simplified email sending and management capabilities.
+A tool for sending emails.
 
-## Usage
+**package**: `jordan-price/toolbox`  
+**class**: `JordanPrice\Toolbox\Tools\Email\EmailTool`  
+**source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Email/EmailTool.php)  
+
+## Install
+
+```bash
+composer require jordan-price/toolbox
+```
+
+## Prism Integration
 
 ```php
 use JordanPrice\Toolbox\Tools\Email\EmailTool;
+use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
 
-$email = new EmailTool();
-$email->send($to, $subject, $content);
+$prism = Prism::text()
+    ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
+    ->withPrompt('Send an email to user@example.com')
+    ->withTools([EmailTool::class])  // Pass the tool class directly
+    ->toolChoice(ToolChoice::Any);
+
+$response = $prism->generate();
 ```
 
-## Available Methods
+## Methods
 
-- `send(string $to, string $subject, string $content)`: Send an email
-- `sendTemplate(string $to, string $template, array $data)`: Send an email using a template
+### __invoke
+
+Send an email.
+
+```php
+public function __invoke(string $to, string $subject, string $body): string
+```
+
+#### Parameters
+- `to` (string): Email address to send to
+- `subject` (string): Subject of the email
+- `body` (string): Body of the email
+
+#### Returns
+- `string`: Response message indicating email status

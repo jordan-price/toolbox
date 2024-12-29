@@ -1,22 +1,52 @@
 ---
 title: 'Crypto Tool'
-description: 'Documentation for the Crypto Tool component'
+description: 'Cryptocurrency price information tool'
 ---
 
 # Crypto Tool
 
-The Crypto Tool provides cryptocurrency-related functionality.
+A tool for fetching cryptocurrency price information.
 
-## Usage
+**package**: `jordan-price/toolbox`  
+**class**: `JordanPrice\Toolbox\Tools\Crypto\CryptoTool`  
+**source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Crypto/CryptoTool.php)  
+
+## Install
+
+```bash
+composer require jordan-price/toolbox
+```
+
+## Prism Integration
 
 ```php
 use JordanPrice\Toolbox\Tools\Crypto\CryptoTool;
+use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
 
-$crypto = new CryptoTool();
-$price = $crypto->getPrice('BTC');
+$prism = Prism::text()
+    ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
+    ->withPrompt('What is the current price of Bitcoin?')
+    ->withTools([CryptoTool::class])  // Pass the tool class directly
+    ->toolChoice(ToolChoice::Any);
+
+$response = $prism->generate();
 ```
 
-## Available Methods
+## Methods
 
-- `getPrice(string $symbol)`: Get current price for a cryptocurrency
-- `getMarketData(string $symbol)`: Get market data for a cryptocurrency
+### __invoke
+
+Get cryptocurrency price information.
+
+```php
+public function __invoke(string $coin, ?string $currency = 'usd'): string
+```
+
+#### Parameters
+- `coin` (string): The cryptocurrency to get price for (e.g., BTC, ETH)
+- `currency` (string): The currency to show price in (e.g., USD, EUR). Default is USD.
+
+#### Returns
+- `string`: Formatted price information

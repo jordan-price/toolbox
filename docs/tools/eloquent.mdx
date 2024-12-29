@@ -1,22 +1,53 @@
 ---
 title: 'Eloquent Tool'
-description: 'Documentation for the Eloquent Tool component'
+description: 'Laravel Eloquent query tool'
 ---
 
 # Eloquent Tool
 
-The Eloquent Tool provides enhanced Eloquent ORM utilities.
+A tool for executing Eloquent queries on Laravel models.
 
-## Usage
+**package**: `jordan-price/toolbox`  
+**class**: `JordanPrice\Toolbox\Tools\Eloquent\EloquentTool`  
+**source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Eloquent/EloquentTool.php)  
+
+## Install
+
+```bash
+composer require jordan-price/toolbox
+```
+
+## Prism Integration
 
 ```php
 use JordanPrice\Toolbox\Tools\Eloquent\EloquentTool;
+use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
 
-$eloquent = new EloquentTool();
-$results = $eloquent->search($model, $criteria);
+$prism = Prism::text()
+    ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
+    ->withPrompt('Find all active users')
+    ->withTools([EloquentTool::class])  // Pass the tool class directly
+    ->toolChoice(ToolChoice::Any);
+
+$response = $prism->generate();
 ```
 
-## Available Methods
+## Methods
 
-- `search(string $model, array $criteria)`: Search records using specified criteria
-- `paginate(string $model, int $perPage)`: Get paginated results
+### __invoke
+
+Execute Eloquent queries on Laravel models.
+
+```php
+public function __invoke(string $model, string $operation, array $parameters = []): string
+```
+
+#### Parameters
+- `model` (string): The model name to query (e.g., User, Post)
+- `operation` (string): The operation to perform (e.g., find, where, create)
+- `parameters` (array): Parameters for the operation
+
+#### Returns
+- `string`: Query result in string format

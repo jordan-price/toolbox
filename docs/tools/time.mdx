@@ -1,22 +1,52 @@
 ---
 title: 'Time Tool'
-description: 'Documentation for the Time Tool component'
+description: 'Time manipulation and formatting utilities'
 ---
 
 # Time Tool
 
-The Time Tool provides time manipulation and formatting utilities.
+A comprehensive tool for handling time operations and timezone conversions.
 
-## Usage
+**package**: `jordan-price/toolbox`  
+**class**: `JordanPrice\Toolbox\Tools\Time\TimeTool`  
+**source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Time/TimeTool.php)  
+
+## Install
+
+```bash
+composer require jordan-price/toolbox
+```
+
+## Prism Integration
 
 ```php
 use JordanPrice\Toolbox\Tools\Time\TimeTool;
+use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
 
-$time = new TimeTool();
-$formatted = $time->format($timestamp, 'Y-m-d');
+$prism = Prism::text()
+    ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
+    ->withPrompt('What time is it in New York?')
+    ->withTools([TimeTool::class])  // Pass the tool class directly
+    ->toolChoice(ToolChoice::Any);
+
+$response = $prism->generate();
 ```
 
-## Available Methods
+## Methods
 
-- `format(string $timestamp, string $format)`: Format a timestamp
-- `convert(string $time, string $fromTz, string $toTz)`: Convert time between timezones
+### __invoke
+
+Get current time in specified timezone and format.
+
+```php
+public function __invoke(string $timezone = 'UTC', string $format = 'full'): string
+```
+
+#### Parameters
+- `timezone` (string): Target timezone (e.g., America/Chicago, UTC). Default is local timezone.
+- `format` (string): Output format (full, short, etc.). Default is full.
+
+#### Returns
+- `string`: Formatted time in the specified timezone

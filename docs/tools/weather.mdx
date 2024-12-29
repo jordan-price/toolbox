@@ -1,22 +1,52 @@
 ---
 title: 'Weather Tool'
-description: 'Documentation for the Weather Tool component'
+description: 'Real-time weather data integration tool'
 ---
 
 # Weather Tool
 
-The Weather Tool provides functionality to fetch and process weather data.
+A comprehensive weather tool for fetching real-time weather data and forecasts.
 
-## Usage
+**package**: `jordan-price/toolbox`  
+**class**: `JordanPrice\Toolbox\Tools\Weather\WeatherTool`  
+**env vars**: `WEATHER_API_KEY`  
+**source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Weather/WeatherTool.php)  
+
+## Install
+
+```bash
+composer require jordan-price/toolbox
+```
+
+## Prism Integration
 
 ```php
 use JordanPrice\Toolbox\Tools\Weather\WeatherTool;
+use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
 
-$weather = new WeatherTool();
-$forecast = $weather->getForecast($location);
+$prism = Prism::text()
+    ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
+    ->withPrompt('What is the current weather in London?')
+    ->withTools([WeatherTool::class])  // Pass the tool class directly
+    ->toolChoice(ToolChoice::Any);
+
+$response = $prism->generate();
 ```
 
-## Available Methods
+## Methods
 
-- `getForecast(string $location)`: Get weather forecast for a specific location
-- `getCurrentConditions(string $location)`: Get current weather conditions
+### __invoke
+
+Get weather data for a location.
+
+```php
+public function __invoke(string $location): string
+```
+
+#### Parameters
+- `location` (string): Location to get the weather for. Can be a city name, zipcode, IP address, or lat/lng coordinates. Example: "London"
+
+#### Returns
+- `string`: Formatted weather information
