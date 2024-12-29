@@ -8,18 +8,6 @@ description: 'A tool for executing Eloquent queries on Laravel models.'
 **env vars**: `None`    
 **source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Eloquent/EloquentTool.php)      
 
-## Publish
-
-Optionally, you can publish the configuration file to make modifications:
-
-```bash
-# Publish just this tool
-php artisan toolbox:publish eloquent
-
-# Or publish all tools
-php artisan toolbox:publish
-```
-
 ## Prism Integration
 
 ```php
@@ -35,6 +23,18 @@ $prism = Prism::text()
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
+```
+
+## Publish
+
+Optionally, you can publish the configuration file to make modifications:
+
+```bash
+# Publish just this tool
+php artisan toolbox:publish eloquent
+
+# Or publish all tools
+php artisan toolbox:publish --all
 ```
 
 ## Methods

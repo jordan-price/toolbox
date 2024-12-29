@@ -8,16 +8,21 @@ description: 'A tool for sending emails using Laravel Mail.'
 **env vars**: `None`    
 **source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Email/EmailTool.php)   
 
-## Publish
+## Prism Integration
 
-Optionally, you can publish the configuration file to make modifications:
+```php
+use JordanPrice\Toolbox\Tools\Email\EmailTool;
+use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
 
-```bash
-# Publish just this tool
-php artisan toolbox:publish email
+$prism = Prism::text()
+    ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
+    ->withPrompt('Send an email to user@example.com')
+    ->withTools([EmailTool::class])  // Pass the tool class directly
+    ->toolChoice(ToolChoice::Any);
 
-# Or publish all tools
-php artisan toolbox:publish
+$response = $prism->generate();
 ```
 
 ## Configuration
@@ -36,21 +41,16 @@ return [
 ];
 ```
 
-## Prism Integration
+## Publish
 
-```php
-use JordanPrice\Toolbox\Tools\Email\EmailTool;
-use EchoLabs\Prism\Prism;
-use EchoLabs\Prism\Enums\Provider;
-use EchoLabs\Prism\Enums\ToolChoice;
+Optionally, you can publish the configuration and view files to make modifications:
 
-$prism = Prism::text()
-    ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
-    ->withPrompt('Send an email to user@example.com')
-    ->withTools([EmailTool::class])  // Pass the tool class directly
-    ->toolChoice(ToolChoice::Any);
+```bash
+# Publish just this tool
+php artisan toolbox:publish email
 
-$response = $prism->generate();
+# Or publish all tools
+php artisan toolbox:publish --all
 ```
 
 ## Methods
