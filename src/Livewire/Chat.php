@@ -366,6 +366,6 @@ Never skip any required tool calls. Always get fresh data from each tool.')
 
     public function render()
     {
-        return view('toolbox:chat');
+        return view('toolbox::chat');
     }
 }
