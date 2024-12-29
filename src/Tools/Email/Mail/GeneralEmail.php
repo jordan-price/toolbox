@@ -1,6 +1,6 @@
 <?php
 
-namespace JordanPrice\Toolbox\Mail;
+namespace JordanPrice\Toolbox\Tools\Email\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -16,9 +16,11 @@ class GeneralEmail extends Mailable
      * Create a new message instance.
      */
     public function __construct(
-        public string $messageBody,
-        public string $emailSubject
-    ) {}
+        protected string $messageBody,
+        protected string $emailSubject
+    ) {
+        $this->view = 'email::general';
+    }
 
     /**
      * Get the message envelope.
@@ -26,7 +28,7 @@ class GeneralEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->emailSubject,
+            subject: $this->emailSubject
         );
     }
 
@@ -36,10 +38,11 @@ class GeneralEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'toolbox::emails.general',
+            view: $this->view,
             with: [
                 'messageBody' => $this->messageBody,
-            ],
+                'emailSubject' => $this->emailSubject
+            ]
         );
     }
 }

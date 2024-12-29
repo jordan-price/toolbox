@@ -34,6 +34,7 @@ return [
     |
     */
     'ai' => [
+        'provider' => env('TOOLBOX_AI_PROVIDER', 'anthropic'),
         'model' => env('TOOLBOX_AI_MODEL', 'gpt-4'),
         'system_prompt' => env('TOOLBOX_SYSTEM_PROMPT', 'You are a helpful AI assistant that can help with calculations, weather information, emails, time-related queries, Eloquent queries, and cryptocurrency prices.
 
