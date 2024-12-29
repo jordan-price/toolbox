@@ -1,16 +1,12 @@
 ---
 title: 'Weather'
-description: 'Real-time weather data integration tool'
+description: 'A comprehensive weather tool for fetching real-time weather data and forecasts.'
 ---
 
-# Weather Tool
-
-A comprehensive weather tool for fetching real-time weather data and forecasts.
-
-**package**: `jordan-price/toolbox`  
-**class**: `JordanPrice\Toolbox\Tools\Weather\WeatherTool`  
-**env vars**: `WEATHER_API_KEY`  
-**source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Weather/WeatherTool.php)  
+**package**: `jordan-price/toolbox`
+**class**: `JordanPrice\Toolbox\Tools\Weather\WeatherTool`
+**env vars**: `WEATHER_API_KEY`
+**source**: [GitHub](https://github.com/jordan-price/toolbox/blob/main/src/Tools/Weather/WeatherTool.php)
 
 ## Install
 
@@ -28,7 +24,7 @@ use EchoLabs\Prism\Enums\ToolChoice;
 
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
-    ->withPrompt('What is the current weather in London?')
+    ->withPrompt('What is the weather in London?')
     ->withTools([WeatherTool::class])  // Pass the tool class directly
     ->toolChoice(ToolChoice::Any);
 
