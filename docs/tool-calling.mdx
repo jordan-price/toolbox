@@ -1,0 +1,146 @@
+---
+title: 'Tool Calling Patterns'
+description: 'Learn how to effectively use single and multiple tools with Prism'
+---
+
+## Single Tool Calling
+
+The simplest pattern is calling a single tool. This is useful for straightforward operations like getting weather data or sending an email.
+
+```php
+$weatherTool = new WeatherTool();
+
+$response = Prism::text()
+    ->using(config('toolbox.ai.provider'))
+    ->withSystemPrompt("You can get weather data for any location.
+        Provide a natural, conversational response including:
+        - Temperature
+        - Conditions
+        - Humidity
+        - Wind speed")
+    ->withPrompt("What's the weather in London?")
+    ->withTools([$weatherTool])
+    ->withMaxSteps(2)  // One for tool call, one for summary
+    ->generate();
+```
+
+### Understanding Single Tool Steps
+
+When using a single tool, you typically need 2 steps:
+1. Step 1: Call the tool and get data
+2. Step 2: Process the data and provide a natural language response
+
+## Multiple Tool Calling
+
+For more complex operations, you can chain multiple tools together. This is useful for workflows like getting weather data and sending it via email.
+
+```php
+$weatherTool = new WeatherTool();
+$emailTool = new EmailTool();
+
+$response = Prism::text()
+    ->using(config('toolbox.ai.provider'))
+    ->withSystemPrompt("You can get weather data and send it via email.
+        For weather + email operations:
+        1. First use the weather tool to get the data
+        2. Then use the email tool to send that data
+        3. Format the weather data nicely in the email body
+        
+        When sending emails:
+        - Use 'Weather Update' as subject if not specified
+        - Format the weather data in a readable way")
+    ->withPrompt("Send the current weather in London to user@example.com")
+    ->withTools([$weatherTool, $emailTool])
+    ->withMaxSteps(5)  // Important: More steps needed for multiple tools
+    ->generate();
+```
+
+### Understanding Multiple Tool Steps
+
+For multiple tools, the steps typically flow like this:
+1. Step 1: Call first tool (e.g., weather)
+2. Step 2: Process first tool's data
+3. Step 3: Call second tool (e.g., email)
+4. Step 4: Process second tool's result
+5. Step 5: Provide final summary
+
+### Complex Example: Weather + Crypto + Email
+
+Here's an example of chaining three tools to send both weather and crypto data via email:
+
+```php
+$weatherTool = new WeatherTool();
+$cryptoTool = new CryptoTool();
+$emailTool = new EmailTool();
+
+$response = Prism::text()
+    ->using(config('toolbox.ai.provider'))
+    ->withSystemPrompt("You can get weather data, crypto prices, and send emails.
+        For this combined operation:
+        1. Get the weather data for the specified location
+        2. Get the crypto price for the specified coin
+        3. Send an email containing both pieces of information
+        
+        Format the data nicely in the email, with sections for:
+        - Current Weather Conditions
+        - Cryptocurrency Prices")
+    ->withPrompt("Send London's weather and Bitcoin's price to user@example.com")
+    ->withTools([$weatherTool, $cryptoTool, $emailTool])
+    ->withMaxSteps(7)  // (2 × number of tools) + 1
+    ->generate();
+```
+
+## Best Practices
+
+When working with tools, follow these guidelines:
+
+### Setting Max Steps
+- Single tool: Use 2 steps (call + summary)
+- Multiple tools: Use (2 × number of tools) + 1
+- Complex workflows: Add extra steps if needed for better processing
+
+### System Prompts
+- Be specific about the order of operations
+- Include formatting instructions
+- Specify default values (e.g., email subjects)
+- Define error handling preferences
+
+### Monitoring and Debugging
+- Log the steps taken in each response
+- Monitor tool call results
+- Check if max steps is sufficient
+- Look for patterns where more steps might be needed
+
+### Error Handling
+- Handle cases where tools might fail
+- Provide fallback behavior
+- Give clear error messages to users
+- Consider retry logic for transient failures
+
+## Common Patterns
+
+Here are some common tool calling patterns:
+
+### Sequential Processing
+```php
+// Tool A → Process → Tool B → Process → Summary
+->withMaxSteps(5)
+```
+
+### Conditional Branching
+```php
+// Tool A → Process → (Tool B or Tool C) → Process → Summary
+->withMaxSteps(5)
+```
+
+### Data Aggregation
+```php
+// Tool A + Tool B → Process Combined Data → Tool C → Summary
+->withMaxSteps(6)
+```
+
+### Iterative Processing
+```php
+// Tool A → Process → Tool A (different params) → Process → Summary
+->withMaxSteps(5)
+```
