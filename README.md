@@ -42,11 +42,15 @@ Get real-time weather data:
 ```php
 use JordanPrice\Toolbox\Tools\Weather\WeatherTool;
 use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
+
+$weatherTool = new WeatherTool();
 
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
     ->withPrompt('What is the weather in London?')
-    ->withTools([WeatherTool::class])
+    ->withTools([$weatherTool])  // Pass the tool instance
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
@@ -59,11 +63,15 @@ Handle time operations:
 ```php
 use JordanPrice\Toolbox\Tools\Time\TimeTool;
 use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
+
+$timeTool = new TimeTool();
 
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
     ->withPrompt('What time is it in New York?')
-    ->withTools([TimeTool::class])
+    ->withTools([$timeTool])
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
@@ -76,11 +84,15 @@ Get cryptocurrency prices:
 ```php
 use JordanPrice\Toolbox\Tools\Crypto\CryptoTool;
 use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
+
+$cryptoTool = new CryptoTool();
 
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
     ->withPrompt('What is the current price of Bitcoin?')
-    ->withTools([CryptoTool::class])
+    ->withTools([$cryptoTool])
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
@@ -93,11 +105,15 @@ Send emails:
 ```php
 use JordanPrice\Toolbox\Tools\Email\EmailTool;
 use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
+
+$emailTool = new EmailTool();
 
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
     ->withPrompt('Send a welcome email to user@example.com')
-    ->withTools([EmailTool::class])
+    ->withTools([$emailTool])
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
@@ -110,11 +126,15 @@ Execute database queries:
 ```php
 use JordanPrice\Toolbox\Tools\Eloquent\EloquentTool;
 use EchoLabs\Prism\Prism;
+use EchoLabs\Prism\Enums\Provider;
+use EchoLabs\Prism\Enums\ToolChoice;
+
+$eloquentTool = new EloquentTool();
 
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
     ->withPrompt('Find all active users')
-    ->withTools([EloquentTool::class])
+    ->withTools([$eloquentTool])
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
