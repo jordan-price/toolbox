@@ -5,8 +5,8 @@ description: 'How to install and configure the toolbox package'
 
 ## Requirements
 
-- PHP 8.1 or higher
-- Laravel 10.0 or higher
+- PHP 8.3 or higher
+- Laravel 11.0 or higher
 
 ## Installation Steps
 
@@ -41,9 +41,12 @@ use EchoLabs\Prism\Enums\Provider;
 use EchoLabs\Prism\Enums\ToolChoice;
 use JordanPrice\Toolbox\Tools\Weather\WeatherTool;
 
+$weatherTool = new WeatherTool();
+
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
-    ->withTools([WeatherTool::class])
+    ->withPrompt('What is the weather in London?')
+    ->withTools([$weatherTool])  // Pass the tool instance
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
