@@ -106,41 +106,240 @@ When working with tools, follow these guidelines:
 - Define error handling preferences
 
 ### Monitoring and Debugging
-- Log the steps taken in each response
-- Monitor tool call results
-- Check if max steps is sufficient
-- Look for patterns where more steps might be needed
+
+Track tool execution and responses using structured logging:
+
+```php
+$debugInfo = [];
+
+$response = Prism::text()
+    ->withSystemPrompt("Get weather data and send via email")
+    ->withPrompt("Send London weather to user@example.com")
+    ->withTools([$weatherTool, $emailTool])
+    ->withMaxSteps(5)
+    ->generate();
+
+// Log response structure
+$debugInfo['response'] = [
+    'has_text' => isset($response->text),
+    'steps_count' => count($response->steps ?? []),
+    'finish_reason' => $response->finishReason?->value,
+];
+
+// Log each step's details
+foreach ($response->steps as $index => $step) {
+    $debugInfo['steps'][] = [
+        'index' => $index,
+        'text' => $step->text ?? null,
+        'finish_reason' => $step->finishReason?->value,
+        'tool_calls' => collect($step->toolCalls)->map(fn($call) => [
+            'tool' => $call->name,
+            'args' => $call->arguments(),
+        ])->toArray(),
+        'tool_results' => collect($step->toolResults)->map(fn($result) => [
+            'tool' => $result->toolName,
+            'result' => $result->result,
+        ])->toArray(),
+    ];
+}
+
+// Log for analysis
+Log::info('Tool Execution Debug Info:', $debugInfo);
+```
+
+Example debug output:
+```json
+{
+    "response": {
+        "has_text": true,
+        "steps_count": 5,
+        "finish_reason": "stop"
+    },
+    "steps": [
+        {
+            "index": 0,
+            "text": "I'll get the weather for London",
+            "finish_reason": "tool_calls",
+            "tool_calls": [
+                {
+                    "tool": "weather",
+                    "args": {"location": "London"}
+                }
+            ],
+            "tool_results": [
+                {
+                    "tool": "weather",
+                    "result": {"temp": 18, "conditions": "cloudy"}
+                }
+            ]
+        }
+        // ... more steps
+    ]
+}
+```
 
 ### Error Handling
-- Handle cases where tools might fail
-- Provide fallback behavior
-- Give clear error messages to users
-- Consider retry logic for transient failures
+
+Implement robust error handling with retries and fallbacks:
+
+```php
+class WeatherEmailService
+{
+    private $maxRetries = 3;
+    private $debugInfo = [];
+
+    public function sendWeatherUpdate(string $location, string $email)
+    {
+        try {
+            $response = $this->executeWithRetry(function () use ($location, $email) {
+                return Prism::text()
+                    ->withSystemPrompt("Get weather and send via email. Handle errors gracefully.")
+                    ->withPrompt("Send {$location} weather to {$email}")
+                    ->withTools([$this->weatherTool, $this->emailTool])
+                    ->withMaxSteps(5)
+                    ->generate();
+            });
+
+            $this->validateResponse($response);
+            return $this->processResponse($response);
+
+        } catch (WeatherToolException $e) {
+            Log::error('Weather API Error', [
+                'location' => $location,
+                'error' => $e->getMessage(),
+                'debug_info' => $this->debugInfo
+            ]);
+            
+            // Fallback to cached weather data
+            return $this->sendCachedWeather($location, $email);
+
+        } catch (EmailToolException $e) {
+            Log::error('Email Send Error', [
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'debug_info' => $this->debugInfo
+            ]);
+
+            // Queue for retry
+            WeatherEmailRetryJob::dispatch($location, $email)
+                ->delay(now()->addMinutes(5));
+
+            throw new ServiceException(
+                "Unable to send email. Queued for retry.",
+                previous: $e
+            );
+        }
+    }
+
+    private function executeWithRetry(callable $operation)
+    {
+        $attempt = 1;
+        $lastException = null;
+
+        while ($attempt <= $this->maxRetries) {
+            try {
+                return $operation();
+            } catch (Exception $e) {
+                $lastException = $e;
+                Log::warning("Attempt {$attempt} failed", [
+                    'error' => $e->getMessage(),
+                    'debug_info' => $this->debugInfo
+                ]);
+                
+                if ($attempt < $this->maxRetries) {
+                    sleep(pow(2, $attempt)); // Exponential backoff
+                }
+                $attempt++;
+            }
+        }
+
+        throw new ServiceException(
+            "Operation failed after {$this->maxRetries} attempts",
+            previous: $lastException
+        );
+    }
+
+    private function validateResponse($response)
+    {
+        if (empty($response->steps)) {
+            throw new ServiceException("No steps in response");
+        }
+
+        // Check if we got weather data
+        $hasWeatherData = collect($response->steps)
+            ->flatMap->toolResults
+            ->contains(fn($result) => 
+                $result->toolName === 'weather' && !empty($result->result)
+            );
+
+        if (!$hasWeatherData) {
+            throw new ServiceException("No weather data in response");
+        }
+    }
+}
+```
+
+This implementation shows:
+- Structured logging of all steps and tool calls
+- Retry logic with exponential backoff
+- Specific error handling for each tool
+- Fallback behaviors (cached data, retry queue)
+- Response validation
+- Detailed error context for debugging
 
 ## Common Patterns
 
-Here are some common tool calling patterns:
+Here are some common tool calling patterns with practical examples:
 
 ### Sequential Processing
+When one tool's output is needed for the next tool's input:
+
 ```php
-// Tool A → Process → Tool B → Process → Summary
-->withMaxSteps(5)
+// Example: Get weather and email it
+$response = Prism::text()
+    ->withSystemPrompt("First get the weather, then email it to the user")
+    ->withPrompt("Send London's weather to user@example.com")
+    ->withTools([$weatherTool, $emailTool])
+    ->withMaxSteps(5)  // 2 for weather, 2 for email, 1 for final summary
+    ->generate();
 ```
 
 ### Conditional Branching
+When the choice of second tool depends on the first tool's result:
+
 ```php
-// Tool A → Process → (Tool B or Tool C) → Process → Summary
-->withMaxSteps(5)
+// Example: Check weather and either send warning email or update status
+$response = Prism::text()
+    ->withSystemPrompt("Check the weather. If severe conditions, send warning email.
+        Otherwise, just log the status.")
+    ->withPrompt("Monitor weather conditions in Miami")
+    ->withTools([$weatherTool, $emailTool, $statusTool])
+    ->withMaxSteps(5)  // 2 for weather, 2 for chosen action, 1 for summary
+    ->generate();
 ```
 
 ### Data Aggregation
+When you need to combine data from multiple tools:
+
 ```php
-// Tool A + Tool B → Process Combined Data → Tool C → Summary
-->withMaxSteps(6)
+// Example: Send both weather and crypto data in one email
+$response = Prism::text()
+    ->withSystemPrompt("Get both weather and crypto data, then send combined report")
+    ->withPrompt("Send London weather and Bitcoin price to user@example.com")
+    ->withTools([$weatherTool, $cryptoTool, $emailTool])
+    ->withMaxSteps(7)  // 2 for weather, 2 for crypto, 2 for email, 1 for summary
+    ->generate();
 ```
 
-### Iterative Processing
+### Interactive Processing
+When you need multiple interactions with the same tool:
+
 ```php
-// Tool A → Process → Tool A (different params) → Process → Summary
-->withMaxSteps(5)
+// Example: Compare weather in multiple cities
+$response = Prism::text()
+    ->withSystemPrompt("Get weather for multiple cities and compare them")
+    ->withPrompt("Compare weather in London, Paris, and New York")
+    ->withTools([$weatherTool])
+    ->withMaxSteps(7)  // 2 steps per city (3 cities) + 1 for comparison
+    ->generate();
 ```
