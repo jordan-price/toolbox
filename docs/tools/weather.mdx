@@ -19,10 +19,12 @@ use EchoLabs\Prism\Prism;
 use EchoLabs\Prism\Enums\Provider;
 use EchoLabs\Prism\Enums\ToolChoice;
 
+$weatherTool = new WeatherTool();
+
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
     ->withPrompt('What is the weather in London?')
-    ->withTools([WeatherTool::class])  // Pass the tool class directly
+    ->withTools([$weatherTool])  // Pass the tool instance
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();

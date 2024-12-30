@@ -15,10 +15,12 @@ use EchoLabs\Prism\Prism;
 use EchoLabs\Prism\Enums\Provider;
 use EchoLabs\Prism\Enums\ToolChoice;
 
+$timeTool = new TimeTool();
+
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
     ->withPrompt('What time is it in New York?')
-    ->withTools([TimeTool::class])  // Pass the tool class directly
+    ->withTools([$timeTool])  // Pass the tool instance
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
@@ -35,8 +37,6 @@ php artisan toolbox:publish time
 # Or publish all tools
 php artisan toolbox:publish --all
 ```
-
-
 
 ## Methods
 

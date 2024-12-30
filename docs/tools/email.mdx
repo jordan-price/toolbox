@@ -15,10 +15,12 @@ use EchoLabs\Prism\Prism;
 use EchoLabs\Prism\Enums\Provider;
 use EchoLabs\Prism\Enums\ToolChoice;
 
+$emailTool = new EmailTool();
+
 $prism = Prism::text()
     ->using(Provider::Anthropic, 'claude-3-5-sonnet-latest')
     ->withPrompt('Send an email to user@example.com')
-    ->withTools([EmailTool::class])  // Pass the tool class directly
+    ->withTools([$emailTool])  // Pass the tool instance
     ->toolChoice(ToolChoice::Any);
 
 $response = $prism->generate();
