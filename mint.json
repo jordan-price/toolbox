@@ -1,5 +1,5 @@
 {
-  "name": "AI Agent Toolbox",
+  "name": "Agentic Toolbox",
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#0D9373",
@@ -10,10 +10,6 @@
     {
       "name": "GitHub",
       "url": "https://github.com/jordan-price/toolbox"
-    },
-    {
-      "name": "Twitter",
-      "url": "https://x.com/jcprice7"
     }
   ],
   "topbarCtaButton": {
@@ -23,7 +19,7 @@
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["docs/introduction", "docs/installation", "docs/configuration", "docs/tool-calling"]
+      "pages": ["docs/introduction", "docs/installation", "docs/configuration"]
     },
     {
       "group": "Tools",
@@ -37,7 +33,6 @@
     }
   ],
   "footerSocials": {
-    "github": "https://github.com/jordan-price/toolbox",
-    "twitter": "https://x.com/jcprice7"
+    "github": "https://github.com/jordan-price/toolbox"
   }
 }

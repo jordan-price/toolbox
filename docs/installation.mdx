@@ -1,12 +1,13 @@
 ---
-title: 'Installation'
-description: 'How to install and configure the toolbox package'
+title: "Installation"
+description: "How to install and configure the toolbox package"
 ---
 
 ## Requirements
 
-- PHP 8.3 or higher
-- Laravel 11.0 or higher
+* PHP 8.3 or higher
+
+* Laravel 11.0 or higher
 
 ## Installation Steps
 
@@ -16,7 +17,7 @@ description: 'How to install and configure the toolbox package'
 composer require jordan-price/toolbox
 ```
 
-3. Publish the configuration file:
+1. Publish the configuration file:
 
 ```bash
 php artisan vendor:publish --tag="toolbox-config"
@@ -33,7 +34,7 @@ WEATHER_API_KEY=your_api_key
 
 ## Usage with Prism
 
-All tools in this package are designed to work with Echolabs [Prism](https://prism.echolabs.dev/getting-started/introduction.html)`. Here's a basic example:
+All tools in this package are designed to work with Echolabs [Prism](https://prism.echolabs.dev/getting-started/introduction.html)\`. Here's a basic example:
 
 ```php
 use EchoLabs\Prism\Prism;
