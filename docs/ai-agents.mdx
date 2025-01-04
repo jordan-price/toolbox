@@ -1,0 +1,231 @@
+---
+title: 'AI Agents'
+description: 'Examples of different AI agent patterns using Prism'
+---
+
+# AI Agent Patterns
+
+This guide demonstrates different AI agent patterns using Prism and our toolbox. Each pattern shows a practical example of how to implement various agent architectures discussed in [Anthropic's research](https://www.anthropic.com/research/building-effective-agents).
+
+## The Augmented LLM Pattern
+
+The most basic building block is an LLM enhanced with tools and memory. Here's an example using the Weather Tool with memory:
+
+```php
+use Echo\Prism\Tool\WeatherTool;
+
+$weatherTool = new WeatherTool();
+
+$response = Prism::text()
+    ->using(config('toolbox.ai.provider'))
+    ->withSystemPrompt("You are an AI assistant with access to weather data and memory of our conversation.
+        Provide natural, conversational responses including relevant weather details.")
+    ->withPrompt("What's the weather like in London?")
+    ->withTools([$weatherTool])
+    ->withMaxSteps(2)  // One for tool call, one for response
+    ->generate();
+```
+
+This allows the LLM to:
+- Access weather data through the WeatherTool
+- Remember previous interactions
+- Generate natural responses based on the data
+
+## Prompt Chaining Pattern
+
+This pattern breaks down complex tasks into sequential steps. Here's an example that generates marketing copy and translates it:
+
+```php
+use Echo\Prism\Tool\{WeatherTool, EmailTool};
+
+$weatherTool = new WeatherTool();
+$emailTool = new EmailTool();
+
+$response = Prism::text()
+    ->using(config('toolbox.ai.provider'))
+    ->withSystemPrompt("Follow these steps:
+        1. Get the current weather data
+        2. Create marketing copy based on the weather
+        3. Send the marketing copy via email
+        
+        Format the email nicely with:
+        - Weather conditions as context
+        - Marketing message
+        - Call to action")
+    ->withPrompt("Create and send weather-based marketing copy to marketing@example.com")
+    ->withTools([$weatherTool, $emailTool])
+    ->withMaxSteps(5)  // 2 for weather, 2 for email, 1 for summary
+    ->generate();
+```
+
+## Routing Pattern
+
+This pattern directs different types of queries to specialized handlers:
+
+```php
+use Echo\Prism\Tool\{WeatherTool, CryptoTool, TimeTool};
+
+class QueryRouter {
+    private $weatherTool;
+    private $cryptoTool;
+    private $timeTool;
+
+    public function __construct() {
+        $this->weatherTool = new WeatherTool();
+        $this->cryptoTool = new CryptoTool();
+        $this->timeTool = new TimeTool();
+    }
+
+    public function route($query) {
+        // First, classify the query
+        $classification = Prism::text()
+            ->withSystemPrompt("Classify this query as: weather, crypto, or time. 
+                Respond with ONLY the classification word.")
+            ->withPrompt($query)
+            ->generate();
+
+        // Route to appropriate handler with specific tools and prompts
+        switch(trim(strtolower($classification))) {
+            case 'weather':
+                return $this->handleWeather($query);
+            case 'crypto':
+                return $this->handleCrypto($query);
+            case 'time':
+                return $this->handleTime($query);
+            default:
+                throw new Exception("Unknown query type");
+        }
+    }
+
+    private function handleWeather($query) {
+        return Prism::text()
+            ->withSystemPrompt("You are a weather specialist. Provide detailed weather information.")
+            ->withPrompt($query)
+            ->withTools([$this->weatherTool])
+            ->withMaxSteps(2)
+            ->generate();
+    }
+
+    // Similar handlers for crypto and time...
+}
+```
+
+## Parallelization Pattern
+
+This pattern runs multiple LLM instances in parallel for faster or more robust results:
+
+```php
+use Echo\Prism\Tool\WeatherTool;
+
+class WeatherAnalyzer {
+    private $weatherTool;
+    
+    public function __construct() {
+        $this->weatherTool = new WeatherTool();
+    }
+
+    public function analyzeSeverity($location) {
+        // Run 3 parallel assessments
+        $assessments = [];
+        
+        for ($i = 0; $i < 3; $i++) {
+            $assessments[] = Prism::text()
+                ->withSystemPrompt("Analyze weather severity as: LOW, MEDIUM, or HIGH.
+                    Consider:
+                    - Temperature extremes
+                    - Precipitation levels
+                    - Wind conditions
+                    Respond with ONLY the severity level.")
+                ->withPrompt("Assess weather severity in $location")
+                ->withTools([$this->weatherTool])
+                ->withMaxSteps(2)
+                ->generate();
+        }
+
+        // Return majority vote
+        $votes = array_count_values(array_map('strtoupper', $assessments));
+        arsort($votes);
+        return key($votes);
+    }
+}
+```
+
+## Orchestrator-Workers Pattern
+
+This pattern uses a main agent to coordinate multiple specialized workers:
+
+```php
+use Echo\Prism\Tool\{WeatherTool, TimeTool, EmailTool};
+
+class WeatherReportOrchestrator {
+    private $weatherTool;
+    private $timeTool;
+    private $emailTool;
+
+    public function __construct() {
+        $this->weatherTool = new WeatherTool();
+        $this->timeTool = new TimeTool();
+        $this->emailTool = new EmailTool();
+    }
+
+    public function generateReport($location, $email) {
+        // Orchestrator plans the tasks
+        $plan = Prism::text()
+            ->withSystemPrompt("Create a plan to generate and send a weather report.
+                Specify which workers to use:
+                - weather_data: Get current conditions
+                - forecast: Get future forecast
+                - delivery: Send email
+                Return a JSON array of required workers.")
+            ->withPrompt("Plan weather report for $location")
+            ->generate();
+
+        $workers = json_decode($plan, true);
+        $results = [];
+
+        // Execute each worker
+        foreach ($workers as $worker) {
+            switch ($worker) {
+                case 'weather_data':
+                    $results['current'] = $this->getCurrentWeather($location);
+                    break;
+                case 'forecast':
+                    $results['forecast'] = $this->getForecast($location);
+                    break;
+                case 'delivery':
+                    $this->sendReport($email, $results);
+                    break;
+            }
+        }
+
+        return $results;
+    }
+
+    private function getCurrentWeather($location) {
+        return Prism::text()
+            ->withSystemPrompt("Get current weather conditions.")
+            ->withPrompt($location)
+            ->withTools([$this->weatherTool])
+            ->withMaxSteps(2)
+            ->generate();
+    }
+
+    // Similar methods for forecast and sending report...
+}
+```
+
+## Best Practices
+
+1. **Step Management**: 
+   - Single tool: Use 2 steps (tool call + summary)
+   - Multiple tools: Use (2 × number of tools) + 1
+   - Complex workflows: Add extra steps as needed
+
+2. **Error Handling**: Implement robust error handling with retries and fallbacks
+3. **System Prompts**: Be specific about operations and formatting
+4. **Monitoring**: Use structured logging for debugging
+5. **Testing**: Thoroughly test each pattern with various inputs
+
+## Conclusion
+
+These patterns demonstrate how to implement different agent architectures using Prism's tool calling capabilities. Choose the pattern that best fits your use case, starting with simpler patterns and adding complexity only when necessary. Remember that the goal is to build reliable and maintainable systems, not necessarily the most sophisticated ones.
