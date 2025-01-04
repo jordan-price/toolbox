@@ -19,7 +19,7 @@
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["docs/introduction", "docs/installation", "docs/configuration", "docs/tool-calling"]
+      "pages": ["docs/introduction", "docs/installation", "docs/configuration", "docs/tool-calling", "docs/ai-agents"]
     },
     {
       "group": "Tools",
