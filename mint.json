@@ -2,9 +2,9 @@
   "name": "Agentic Toolbox",
   "favicon": "/favicon.png",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373"
+    "primary": "#f97316",
+    "light": "#fb923c",
+    "dark": "#c2410c"
   },
   "topbarLinks": [
     {
